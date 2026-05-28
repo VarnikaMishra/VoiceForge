@@ -1,17 +1,34 @@
-// Provides dark/light theme state and toggle function to the entire VoiceForge app.
 import React from "react";
 
 const ThemeContext = React.createContext(null);
+const DEFAULT_THEME = "light";
 
-export function ThemeProvider({ children }) {
-  // Initialise from localStorage, then fall back to the OS preference
-  const [theme, setTheme] = React.useState(() => {
+function getStoredTheme() {
+  try {
     const saved = localStorage.getItem("voiceforge:theme");
     if (saved === "dark" || saved === "light") return saved;
-    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-  });
+  } catch {
+    // Storage can be unavailable in private or restricted browser contexts.
+  }
 
-  // Apply / remove the "dark" class on <html> whenever theme changes
+  try {
+    return window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : DEFAULT_THEME;
+  } catch {
+    return DEFAULT_THEME;
+  }
+}
+
+function storeTheme(theme) {
+  try {
+    localStorage.setItem("voiceforge:theme", theme);
+  } catch {
+    // Theme still works for the current session when persistence is unavailable.
+  }
+}
+
+export function ThemeProvider({ children }) {
+  const [theme, setTheme] = React.useState(getStoredTheme);
+
   React.useEffect(() => {
     const root = document.documentElement;
     if (theme === "dark") {
@@ -19,7 +36,7 @@ export function ThemeProvider({ children }) {
     } else {
       root.classList.remove("dark");
     }
-    localStorage.setItem("voiceforge:theme", theme);
+    storeTheme(theme);
   }, [theme]);
 
   function toggleTheme() {
@@ -33,9 +50,12 @@ export function ThemeProvider({ children }) {
   );
 }
 
-// Convenience hook — use this in any component
 export function useTheme() {
   const ctx = React.useContext(ThemeContext);
   if (!ctx) throw new Error("useTheme must be used inside <ThemeProvider>");
   return ctx;
 }
+
+
+
+
