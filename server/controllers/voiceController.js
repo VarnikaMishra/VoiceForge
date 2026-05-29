@@ -1,17 +1,16 @@
 // Implements ElevenLabs voice cloning and text-to-speech proxy handlers.
 const ELEVENLABS_BASE_URL = "https://api.elevenlabs.io/v1";
 
-function getApiKey(request) {
-  return request.get("X-ElevenLabs-Api-Key") || process.env.ELEVENLABS_API_KEY;
+function getApiKey() {
+  return process.env.ELEVENLABS_API_KEY;
 }
 
-function requireApiKey(request) {
-  const apiKey = getApiKey(request);
+function requireApiKey() {
+  const apiKey = getApiKey();
   if (!apiKey) {
-    const error = new Error("Missing ElevenLabs API key. Add it to .env or Settings.");
-    error.status = 400;
+    const error = new Error("Missing ElevenLabs API key. Set ELEVENLABS_API_KEY in your server .env file.");
+    error.status = 500;
     throw error;
-    // console.log(process.env.ELEVENLABS_API_KEY);
   }
   return apiKey;
 }

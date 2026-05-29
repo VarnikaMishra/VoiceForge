@@ -60,9 +60,6 @@ export default function useVoiceClone() {
 
       const response = await fetch("/api/voice/clone", {
         method: "POST",
-        headers: {
-          "X-ElevenLabs-Api-Key": localStorage.getItem("voiceforge:elevenlabsApiKey") || ""
-        },
         body: formData
       });
       const payload = await response.json();

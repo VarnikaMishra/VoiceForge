@@ -13,8 +13,7 @@ export default function useTTS() {
       const response = await fetch("/api/voice/speak", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          "X-ElevenLabs-Api-Key": localStorage.getItem("voiceforge:elevenlabsApiKey") || ""
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({ text, voice_id: voiceId })
       });
