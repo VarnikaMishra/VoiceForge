@@ -305,27 +305,93 @@ jobs:
 
             if (problems.length === 0) {
               await assignAuthor();
+              const successCommentBody =
+                `${marker}\n` +
+                `## PR Format Check Passed\n\n` +
+                `Hi @${username}, thank you for opening this PR.\n\n` +
+                `Your PR has passed the automated structure checks and entered the maintainer review queue.\n\n` +
+                `| Check | Status |\n` +
+                `| --- | --- |\n` +
+                `| Program template | Passed |\n` +
+                `| Closing issue | ${linkedIssueNumbers.map(number => `#${number}`).join(', ')} |\n` +
+                `| Issue assignment | PR author matches linked issue assignee |\n` +
+                `| Title format | Conventional Commits title detected |\n` +
+                `| PR details | Description has enough review context |\n` +
+                `| Change size | ${totalChanges} lines changed across ${files.length} file(s) |\n\n` +
+                `This does not mean the PR is approved yet. A maintainer will still review scope, code quality, tests, and merge readiness.\n\n` +
+                `VoiceForge automation`;
+
+              if (existing && existing.body.trim() === successCommentBody.trim()) return;
+
               if (existing) {
                 try {
-                  await github.rest.issues.deleteComment({
+                  await github.rest.issues.updateComment({
                     owner,
                     repo,
-                    comment_id: existing.id
+                    comment_id: existing.id,
+                    body: successCommentBody
                   });
                 } catch (error) {
-                  if (error.status === 403) core.warning(`Could not delete validator comment: ${error.message}`);
+                  if (error.status === 403) core.warning(`Could not update validator comment: ${error.message}`);
+                  else throw error;
+                }
+              } else {
+                try {
+                  await github.rest.issues.createComment({
+                    owner,
+                    repo,
+                    issue_number,
+                    body: successCommentBody
+                  });
+                } catch (error) {
+                  if (error.status === 403) core.warning(`Could not create validator comment: ${error.message}`);
                   else throw error;
                 }
               }
               return;
             }
 
+            const fixRows = [];
+            if (needsLabelsToAdd.includes('needs-template')) {
+              fixRows.push(['PR template', 'Use one complete program PR template and keep all required sections.']);
+            }
+            if (needsLabelsToAdd.includes('needs-linked-issue')) {
+              fixRows.push(['Linked issue', 'Add a valid closing reference like `Closes #64`, and make sure the issue has the same program label.']);
+            }
+            if (needsLabelsToAdd.includes('needs-assignee-match')) {
+              fixRows.push(['Issue assignment', `Ask a maintainer to assign the linked issue to @${username}, or open a PR only for an issue already assigned to you.`]);
+            }
+            if (needsLabelsToAdd.includes('needs-title')) {
+              fixRows.push(['PR title', 'Use Conventional Commits, for example `fix: update onboarding progress bar`.']);
+            }
+            if (needsLabelsToAdd.includes('needs-quality')) {
+              fixRows.push(['PR details', 'Fill the description and test steps with enough detail for maintainers to review the change.']);
+            }
+            if (!matchedProgram) {
+              fixRows.push(['Program', 'Choose exactly one program: GSSoC, NSOC, SSOC, or ELUSOC.']);
+            }
+
+            const detectedLabels = [...new Set([...neutralLabelsToAdd, ...needsLabelsToAdd])];
             const commentBody =
               `${marker}\n` +
               `## PR Update Needed\n\n` +
-              `Hi @${username}, thanks for the PR. VoiceForge needs the PR template, closing issue, and contributor assignment to line up before this can enter maintainer review.\n\n` +
+              `Hi @${username}, thank you for opening this PR.\n\n` +
+              `VoiceForge automation found a few items that need correction before this PR can enter maintainer review.\n\n` +
+              `### What Needs Attention\n\n` +
               problems.map(problem => `- ${problem}`).join('\n') +
-              `\n\nPlease edit the PR description/title and push updates. This comment updates automatically.`;
+              `\n\n` +
+              `### How To Fix\n\n` +
+              `| Area | Correction |\n` +
+              `| --- | --- |\n` +
+              fixRows.map(([area, correction]) => `| ${area} | ${correction} |`).join('\n') +
+              `\n\n` +
+              `### Auto-Label Summary\n\n` +
+              `| Category | Label(s) |\n` +
+              `| --- | --- |\n` +
+              `| Detected | ${detectedLabels.length > 0 ? detectedLabels.map(label => `\`${label}\``).join(', ') : 'None'} |\n` +
+              `| Blockers | ${needsLabelsToAdd.length > 0 ? [...new Set(needsLabelsToAdd)].map(label => `\`${label}\``).join(', ') : 'None'} |\n\n` +
+              `After editing the PR title or description, this check will run again automatically.\n\n` +
+              `VoiceForge automation`;
 
             if (existing) {
               try {

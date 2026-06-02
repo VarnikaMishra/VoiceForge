@@ -95,7 +95,10 @@ jobs:
             const signoffRegex = /^Signed-off-by:\s+.+\s+<[^<>]+>\s*$/im;
             const invalidCommits = commits
               .filter(commit => !signoffRegex.test(commit.commit.message || ''))
-              .map(commit => commit.sha.substring(0, 7));
+              .map(commit => ({
+                sha: commit.sha.substring(0, 7),
+                title: (commit.commit.message || '').split('\n')[0]
+              }));
 
             const missingDco = invalidCommits.length > 0;
             if (missingDco) {
@@ -120,8 +123,8 @@ jobs:
             );
 
             const body = missingDco
-              ? `${marker}\n## DCO Sign-off Suggested\n\nHi @${username}, some commits are missing a valid \`Signed-off-by\` line.\n\nInvalid commits:\n${invalidCommits.map(sha => `- \`${sha}\``).join('\n')}\n\nYou can fix the latest commit with:\n\n\`\`\`bash\ngit commit --amend --signoff\ngit push --force-with-lease\n\`\`\`\n\nFor multiple commits, use an interactive rebase or recommit with sign-off. This is a friendly reminder and does not block the PR.`
-              : `${marker}\n## DCO Sign-off Verified\n\nHi @${username}, all commits currently include a valid \`Signed-off-by\` line.`;
+              ? `${marker}\n## DCO Sign-off Missing\n\nHi @${username}, some commits in this PR are missing a valid \`Signed-off-by:\` line.\n\n### Invalid Commits\n\n${invalidCommits.map(commit => `- \`${commit.sha}\` - ${commit.title}`).join('\n')}\n\n### Fix The Most Recent Commit\n\n\`\`\`bash\ngit commit --amend --signoff\ngit push --force-with-lease\n\`\`\`\n\n### Fix Multiple Commits\n\nReplace \`N\` with the number of commits that need sign-off:\n\n\`\`\`bash\ngit rebase --signoff HEAD~N\ngit push --force-with-lease\n\`\`\`\n\nThe DCO sign-off confirms you have the right to submit this contribution. This comment updates automatically after fixes are pushed.\n\nVoiceForge automation`
+              : `${marker}\n## DCO Sign-off Verified\n\nHi @${username}, all commits currently include a valid \`Signed-off-by:\` line.\n\nYour DCO check is clear. Maintainers will continue with the normal PR review flow.\n\nVoiceForge automation`;
 
             if (existing && existing.body.trim() === body.trim()) return;
 

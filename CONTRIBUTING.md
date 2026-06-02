@@ -50,6 +50,8 @@ Issues or pull requests that skip the required template will receive a `needs-te
 
 Pull requests are validated only when the PR author matches the assignee on the linked closing issue. Valid pull requests receive the program label, `pr-validated`, and other helpful review labels. Pull requests with a missing template, missing closing issue, wrong issue assignment, or invalid title receive the matching `needs-*` labels instead.
 
+After a pull request is merged, automation marks the PR with `merged`, `pr-merged`, and `completed`. Linked closing issues receive `completed`, `issue-completed`, and `closed-by-pr`.
+
 To request assignment on an open issue, comment with one of these commands:
 
 ```text
