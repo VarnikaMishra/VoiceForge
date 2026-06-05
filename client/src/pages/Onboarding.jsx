@@ -16,8 +16,12 @@ export default function Onboarding({ onReady }) {
 
   async function handleClone() {
     if (!recording) return;
-    const profile = await cloneVoice(recording, voiceName);
-    setSuccessProfile(profile);
+    try {
+      const profile = await cloneVoice(recording, voiceName);
+      setSuccessProfile(profile);
+    } catch (err) {
+      console.error("Voice cloning failed:", err);
+    }
   }
 
   return (
