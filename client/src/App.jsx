@@ -122,7 +122,7 @@ export default function App() {
 
       <ScrollToBottomButton activeTab={activeTab} />
       <Footer onNavigate={selectTab} tabs={tabs} />
-      
+
     </div>
   );
 }
