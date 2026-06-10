@@ -36,11 +36,13 @@ export default function Contributors() {
       </section>
 
       {status === "loading" && (
-        <p className="text-center text-sm text-neutral-500">Loading contributors…</p>
+        <p role="status" aria-live="polite" className="text-center text-sm text-neutral-500">
+          Loading contributors…
+        </p>
       )}
 
       {status === "error" && (
-        <p className="text-center text-sm text-red-500">
+        <p role="alert" className="text-center text-sm text-red-500">
           Failed to load contributors. Please try again later.
         </p>
       )}
