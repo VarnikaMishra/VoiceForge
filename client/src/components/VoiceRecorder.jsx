@@ -16,6 +16,7 @@ export default function VoiceRecorder({ onRecordingReady, disabled = false }) {
   const analyserRef = React.useRef(null);
   const audioCtxRef = React.useRef(null);
   const rafRef = React.useRef(null);
+  const errorTimerRef = React.useRef(null);
 
   async function startRecording() {
     setRecorderError("");
@@ -86,6 +87,8 @@ export default function VoiceRecorder({ onRecordingReady, disabled = false }) {
       }
 
       setRecorderError(friendlyMessage);
+      if (errorTimerRef.current) clearTimeout(errorTimerRef.current);
+      errorTimerRef.current = setTimeout(() => setRecorderError(""), 6000);
     }
   }
 
@@ -97,6 +100,7 @@ export default function VoiceRecorder({ onRecordingReady, disabled = false }) {
     return () => {
       isMountedRef.current = false;
       window.clearInterval(timerRef.current);
+      if (errorTimerRef.current) clearTimeout(errorTimerRef.current);
       streamRef.current?.getTracks().forEach((track) => track.stop());
     };
   }, []);
@@ -231,9 +235,29 @@ export default function VoiceRecorder({ onRecordingReady, disabled = false }) {
       </div>
 
       {recorderError && (
-        <div className="mt-4 rounded-md border border-coral/40 bg-coral/10 p-3 text-sm font-semibold text-ink flex items-center gap-2">
-          <CircleAlert size={18} aria-hidden="true" className="text-coral" />
-          <span>{recorderError}</span>
+        <div role="alert" aria-live="polite" className="mt-4 rounded-md border border-coral/40 bg-coral/10 p-3 text-sm font-semibold text-ink flex items-center gap-2">
+          <CircleAlert size={18} aria-hidden="true" className="text-coral shrink-0" />
+          <span className="flex-1">{recorderError}</span>
+          <button
+            type="button"
+            onClick={startRecording}
+            disabled={disabled}
+            className="text-xs underline hover:no-underline shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Try again
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              if (errorTimerRef.current) clearTimeout(errorTimerRef.current);
+              setRecorderError("");
+            }}
+            aria-label="Dismiss error"
+            className="text-xs font-bold shrink-0"
+          >
+
+            ✕
+          </button>
         </div>
       )}
       <div className="mt-4 flex items-center gap-2 text-sm text-ink/60 dark:text-muted">
