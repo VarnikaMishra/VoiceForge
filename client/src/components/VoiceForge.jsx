@@ -229,7 +229,7 @@ export default function VoiceForge() {
           onUnpin={toggleFavorite}
         />
 
-        <QuickReplies onSelect={handleQuickReply} />
+        <QuickReplies onSelect={handleQuickReply} showToast={showToast} />
 
         <div className="flex flex-1 flex-col gap-3 overflow-auto p-5 dark:bg-black">
           <div className="flex items-center justify-between">

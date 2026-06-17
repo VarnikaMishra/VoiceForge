@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Plus, X, Check, Pencil } from "lucide-react";
-import { useToast, ToastContainer } from "./useToast.jsx";
 
 const CATEGORIES = ["General", "Social", "Needs", "Urgent"];
 
@@ -18,7 +17,7 @@ const DEFAULT_QUICK_REPLIES = [
 
 const STORAGE_KEY = "vf_quick_replies";
 
-export function QuickReplies({ onSelect }) {
+export function QuickReplies({ onSelect, showToast }) {
   const [replies, setReplies] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
@@ -47,8 +46,6 @@ export function QuickReplies({ onSelect }) {
   const [newPhrase, setNewPhrase] = useState("");
   const [selectedCategoryTab, setSelectedCategoryTab] = useState("All");
   const [newCategory, setNewCategory] = useState("General");
-
-  const { toasts, showToast } = useToast();
 
   useEffect(() => {
     try {
@@ -359,8 +356,6 @@ export function QuickReplies({ onSelect }) {
           </p>
         )}
       </div>
-
-      <ToastContainer toasts={toasts} />
     </section>
   );
 }
