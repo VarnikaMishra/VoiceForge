@@ -77,23 +77,17 @@ export function LanguageSelector({ value, onChange, id, compact = false }) {
     }
     switch (e.key) {
       case "Escape": e.preventDefault(); closeDropdown(); break;
-      case "ArrowDown": {
-        e.preventDefault();
+      case "ArrowDown": e.preventDefault();
         const nextIdx = selectableIndices[Math.min(selectableIndices.indexOf(focusIndex) + 1, selectableIndices.length - 1)];
         if (nextIdx !== undefined) { setFocusIndex(nextIdx); scrollToItem(nextIdx); }
         break;
-      }
-      case "ArrowUp": {
-        e.preventDefault();
+      case "ArrowUp": e.preventDefault();
         const prevIdx = selectableIndices[Math.max(selectableIndices.indexOf(focusIndex) - 1, 0)];
         if (prevIdx !== undefined) { setFocusIndex(prevIdx); scrollToItem(prevIdx); }
         break;
-      }
-      case "Enter": {
-        e.preventDefault();
+      case "Enter": e.preventDefault();
         if (focusIndex >= 0 && flatItems[focusIndex]) selectLanguage(flatItems[focusIndex].code);
         break;
-      }
     }
   }, [isOpen, focusIndex, flatItems, selectableIndices, openDropdown, closeDropdown, selectLanguage]);
 
@@ -106,8 +100,16 @@ export function LanguageSelector({ value, onChange, id, compact = false }) {
 
   return (
     <div ref={containerRef} className="relative" onKeyDown={handleKeyDown}>
-      <button ref={triggerRef} id={id} type="button" onClick={toggle} aria-haspopup="listbox" aria-expanded={isOpen} aria-label="Select output language"
-        className={`group inline-flex items-center gap-2 rounded-lg border font-medium transition-all duration-200 ${compact ? "px-3 py-2 text-sm" : "w-full px-4 py-3 text-sm"} ${isOpen ? "border-moss bg-mint/20 text-ink dark:border-glow dark:bg-glow/10 dark:text-neutral-100" : "border-neutral-200 bg-white dark:border-border dark:bg-black dark:text-neutral-100"}`}>
+      <button 
+        ref={triggerRef} 
+        id={id} 
+        type="button" 
+        onClick={toggle} 
+        aria-haspopup="listbox" 
+        aria-expanded={isOpen} 
+        aria-label={`Select output language, current: ${selectedLang ? selectedLang.name : "Auto-detect"}`}
+        className={`group inline-flex items-center gap-2 rounded-lg border font-medium transition-all duration-200 ${compact ? "px-3 py-2 text-sm" : "w-full px-4 py-3 text-sm"} ${isOpen ? "border-moss bg-mint/20 text-ink dark:border-glow dark:bg-glow/10 dark:text-neutral-100" : "border-neutral-200 bg-white dark:border-border dark:bg-black dark:text-neutral-100"}`}
+      >
         <span className="flex-1 text-left truncate">{selectedLang ? `${selectedLang.flag} ${selectedLang.name}` : "🌐 Auto-detect"}</span>
         <ChevronDown size={compact ? 14 : 16} className={`transition-transform ${isOpen ? "rotate-180" : ""}`} />
       </button>
