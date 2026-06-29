@@ -37,8 +37,8 @@ export function loadLanguage() {
   try {
     const legacyCompose = localStorage.getItem("voiceforge:compose-language");
     const current = localStorage.getItem(LANGUAGE_STORAGE_KEY);
-    if (current === null && legacyCompose) {
-      const migrated = VALID_CODES.has(legacyCompose) ? legacyCompose : "en";
+    if (current === null && legacyCompose !== null) {
+      const migrated = legacyCompose === "" || VALID_CODES.has(legacyCompose) ? legacyCompose : "en";
       localStorage.setItem(LANGUAGE_STORAGE_KEY, migrated);
       localStorage.removeItem("voiceforge:compose-language");
       return migrated;
