@@ -119,7 +119,11 @@ export function LanguageSelector({ value, onChange, id, compact = false }) {
             aria-activedescendant={focusIndex >= 0 ? (id ? `${id}-option-${focusIndex}` : `option-${focusIndex}`) : undefined}
             className="overflow-y-auto overscroll-contain max-h-[360px]"
           >
-            {filtered.length === 0 && <p className="px-4 py-8 text-center text-sm text-neutral-400">No matches</p>}
+            {filtered.length === 0 && (
+              <li role="presentation" className="px-4 py-8 text-center text-sm text-neutral-400">
+                No matches
+              </li>
+            )}
             {flatItems.map((item, index) => {
               if (item.type === "header") return <li key={item.region} role="presentation" className="sticky top-0 bg-neutral-50 px-4 py-2 text-[11px] font-bold uppercase text-neutral-400">{item.region}</li>;
     
