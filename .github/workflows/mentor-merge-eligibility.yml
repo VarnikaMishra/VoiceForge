@@ -62,7 +62,8 @@ jobs:
               'joyprakashk',
               'rushi-k12',
               'itzzavdheshh',
-              'Nitya-003'
+              'Nitya-003',
+              '4f4d'
             ];
             const ADMINS = ['itzzavdhesh'];
 

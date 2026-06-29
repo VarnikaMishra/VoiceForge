@@ -45,7 +45,8 @@ jobs:
               'joyprakashk':    'mentor:joyprakashk',
               'rushi-k12':      'mentor:rushi-k12',
               'itzzavdheshh':    'mentor:itzzavdheshh',
-              'Nitya-003':      'mentor:Nitya-003'
+              'Nitya-003':      'mentor:Nitya-003',
+              '4f4d':           'mentor:4f4d'
             };
             const ADMINS = ['itzzavdhesh'];
             // ─────────────────────────────────────────────────────────────
