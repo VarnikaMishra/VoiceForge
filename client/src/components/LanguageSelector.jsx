@@ -77,17 +77,23 @@ export function LanguageSelector({ value, onChange, id, compact = false }) {
     }
     switch (e.key) {
       case "Escape": e.preventDefault(); closeDropdown(); break;
-      case "ArrowDown": e.preventDefault();
+      case "ArrowDown": {
+        e.preventDefault();
         const nextIdx = selectableIndices[Math.min(selectableIndices.indexOf(focusIndex) + 1, selectableIndices.length - 1)];
         if (nextIdx !== undefined) { setFocusIndex(nextIdx); scrollToItem(nextIdx); }
         break;
-      case "ArrowUp": e.preventDefault();
+      }
+      case "ArrowUp": {
+        e.preventDefault();
         const prevIdx = selectableIndices[Math.max(selectableIndices.indexOf(focusIndex) - 1, 0)];
         if (prevIdx !== undefined) { setFocusIndex(prevIdx); scrollToItem(prevIdx); }
         break;
-      case "Enter": e.preventDefault();
+      }
+      case "Enter": {
+        e.preventDefault();
         if (focusIndex >= 0 && flatItems[focusIndex]) selectLanguage(flatItems[focusIndex].code);
         break;
+      }
     }
   }, [isOpen, focusIndex, flatItems, selectableIndices, openDropdown, closeDropdown, selectLanguage]);
 
