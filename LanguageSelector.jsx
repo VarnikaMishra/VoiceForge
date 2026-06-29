@@ -116,7 +116,7 @@ export function LanguageSelector({ value, onChange, id, compact = false }) {
             ref={listRef} 
             role="listbox" 
             aria-label="Available languages"
-            aria-activedescendant={focusIndex >= 0 ? `option-${focusIndex}` : undefined}
+            aria-activedescendant={focusIndex >= 0 ? (id ? `${id}-option-${focusIndex}` : `option-${focusIndex}`) : undefined}
             className="overflow-y-auto overscroll-contain max-h-[360px]"
           >
             {filtered.length === 0 && <p className="px-4 py-8 text-center text-sm text-neutral-400">No matches</p>}
@@ -124,11 +124,11 @@ export function LanguageSelector({ value, onChange, id, compact = false }) {
               if (item.type === "header") return <li key={item.region} role="presentation" className="sticky top-0 bg-neutral-50 px-4 py-2 text-[11px] font-bold uppercase text-neutral-400">{item.region}</li>;
     
               const isSelected = value === item.code;
-    
+              const optionId = id ? `${id}-option-${index}` : `option-${index}`;
               return (
                 <li 
                   key={item.code || "auto"} 
-                  id={`option-${index}`}
+                  id={optionId}
                   role="option" 
                   aria-selected={isSelected} 
                   data-index={index}
