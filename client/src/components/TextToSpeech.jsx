@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { SendHorizontal } from "lucide-react";
 
 export default function TextToSpeech({ onSpeak, disabled = false, status = "idle" }) {
-  // Move the constant here, inside the component scope
   const MAX_TTS_CHARS = 300;
   
   const [text, setText] = React.useState("");
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  
   const trimmedText = text.trim();
   const characterCount = text.length;
   const wordCount = trimmedText ? trimmedText.split(/\s+/).length : 0;
@@ -23,7 +24,17 @@ export default function TextToSpeech({ onSpeak, disabled = false, status = "idle
     { label: "Bye", text: "Goodbye." }, { label: "More", text: "More, please." },
     { label: "Done", text: "I am done." }, { label: "Wait", text: "Please wait." }
   ];
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  // Fix: Define the missing speakPhrase function
+  const speakPhrase = useCallback(async (phraseText) => {
+    if (disabled || status === "speaking" || isSubmitting) return;
+    setIsSubmitting(true);
+    try {
+      await onSpeak(phraseText);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [onSpeak, disabled, status, isSubmitting]);
   
   async function submit() {
     if (!trimmedText || disabled || status === "speaking" || isSubmitting) return;
