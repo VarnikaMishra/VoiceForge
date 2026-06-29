@@ -22,7 +22,7 @@ export default function TextToSpeech({ onSpeak, disabled = false, status = "idle
   ];
 
   async function submit() {
-    if (!trimmedText || disabled) return;
+    if (!trimmedText || disabled || status === "speaking") return;
     await onSpeak(trimmedText);
     setText("");
   }
