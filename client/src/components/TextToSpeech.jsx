@@ -23,11 +23,17 @@ export default function TextToSpeech({ onSpeak, disabled = false, status = "idle
     { label: "Bye", text: "Goodbye." }, { label: "More", text: "More, please." },
     { label: "Done", text: "I am done." }, { label: "Wait", text: "Please wait." }
   ];
-
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  
   async function submit() {
-    if (!trimmedText || disabled || status === "speaking") return;
-    await onSpeak(trimmedText);
-    setText("");
+    if (!trimmedText || disabled || status === "speaking" || isSubmitting) return;
+    setIsSubmitting(true);
+    try {
+      await onSpeak(trimmedText);
+      setText("");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   function handleKeyDown(event) {
@@ -51,7 +57,11 @@ export default function TextToSpeech({ onSpeak, disabled = false, status = "idle
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
         {phrases.map((p) => (
-          <button key={p.label} disabled={disabled || status === "speaking"} onClick={() => onSpeak(p.text)}
+          <button
+            key={p.label}
+            type="button"
+            disabled={disabled || status === "speaking" || isSubmitting}
+            onClick={() => speakPhrase(p.text)}
             className={`px-3 py-2 text-sm font-semibold rounded-md transition ${p.urgent ? "bg-red-500 text-white animate-pulse" : "bg-moss/10 hover:bg-moss/20 dark:bg-white/5 dark:hover:bg-white/10"}`}>
             {p.label}
           </button>
@@ -68,7 +78,7 @@ export default function TextToSpeech({ onSpeak, disabled = false, status = "idle
         Characters: {characterCount}/{MAX_TTS_CHARS}
       </p>
       
-      <button type="button" onClick={submit} disabled={disabled || !trimmedText || status === "speaking"}
+      <button type="button" onClick={submit} disabled={disabled || !trimmedText || status === "speaking" || isSubmitting}
         className="mt-4 inline-flex items-center justify-center gap-2 rounded-md bg-coral px-5 py-3 font-bold text-white transition hover:bg-coral/90 disabled:cursor-not-allowed disabled:opacity-50">
         <SendHorizontal size={18} aria-hidden="true" />
         {status === "speaking" ? "Generating..." : "Speak"}
