@@ -2,6 +2,9 @@ import React from "react";
 import { SendHorizontal } from "lucide-react";
 
 export default function TextToSpeech({ onSpeak, disabled = false, status = "idle" }) {
+  // Move the constant here, inside the component scope
+  const MAX_TTS_CHARS = 300;
+  
   const [text, setText] = React.useState("");
   const trimmedText = text.trim();
   const characterCount = text.length;
@@ -46,7 +49,6 @@ export default function TextToSpeech({ onSpeak, disabled = false, status = "idle
         </p>
       </div>
 
-      {/* NEW: Quick-Phrase Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
         {phrases.map((p) => (
           <button key={p.label} disabled={disabled || status === "speaking"} onClick={() => onSpeak(p.text)}
@@ -55,7 +57,7 @@ export default function TextToSpeech({ onSpeak, disabled = false, status = "idle
           </button>
         ))}
       </div>
-      const MAX_TTS_CHARS = 300;
+
       <textarea
         maxLength={MAX_TTS_CHARS}
         value={text} onChange={(e) => setText(e.target.value)} onKeyDown={handleKeyDown} disabled={disabled}
