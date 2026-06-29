@@ -1,7 +1,7 @@
 export const LANGUAGE_STORAGE_KEY = "voiceforge:language";
 
 export const SUPPORTED_LANGUAGES = [
-  { code: "en", name: "English", nativeName: "English", flag: "🇺🇸", region: "Europe" },
+  { code: "en", name: "English", nativeName: "English", flag: "🇬🇧", region: "Europe" },
   { code: "fr", name: "French", nativeName: "Français", flag: "🇫🇷", region: "Europe" },
   { code: "de", name: "German", nativeName: "Deutsch", flag: "🇩🇪", region: "Europe" },
   { code: "es", name: "Spanish", nativeName: "Español", flag: "🇪🇸", region: "Europe" },
