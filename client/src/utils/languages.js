@@ -43,7 +43,11 @@ export function loadLanguage() {
       localStorage.removeItem("voiceforge:compose-language");
       return migrated;
     }
-    return (current !== null && (current === "" || VALID_CODES.has(current))) ? current : "en";
+    const nameToCode = Object.fromEntries(
+      SUPPORTED_LANGUAGES.map(({ name, code }) => [name, code])
+    );
+    const normalized = nameToCode[current] ?? current;
+    return (current !== null && (normalized === "" || VALID_CODES.has(normalized))) ? normalized : "en";
   } catch { return "en"; }
 }
 
