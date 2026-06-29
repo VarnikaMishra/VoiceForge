@@ -10,6 +10,7 @@ export function LanguageSelector({ value, onChange, id, compact = false }) {
   const containerRef = useRef(null);
   const searchRef = useRef(null);
   const listRef = useRef(null);
+  const triggerRef = useRef(null); // Added for focus restoration
 
   const selectedLang = getLanguageByCode(value);
   const regions = useMemo(() => getRegions(), []);
@@ -39,17 +40,18 @@ export function LanguageSelector({ value, onChange, id, compact = false }) {
     return acc;
   }, []), [flatItems]);
 
+  const closeDropdown = useCallback(() => {
+    setIsOpen(false);
+    setSearch("");
+    setFocusIndex(-1);
+    triggerRef.current?.focus(); // Restore focus to the trigger button
+  }, []);
+
   const openDropdown = useCallback(() => {
     setIsOpen(true);
     setSearch("");
     setFocusIndex(-1);
     requestAnimationFrame(() => searchRef.current?.focus());
-  }, []);
-
-  const closeDropdown = useCallback(() => {
-    setIsOpen(false);
-    setSearch("");
-    setFocusIndex(-1);
   }, []);
 
   const toggle = useCallback(() => (isOpen ? closeDropdown() : openDropdown()), [isOpen, openDropdown, closeDropdown]);
@@ -98,7 +100,7 @@ export function LanguageSelector({ value, onChange, id, compact = false }) {
 
   return (
     <div ref={containerRef} className="relative" onKeyDown={handleKeyDown}>
-      <button id={id} type="button" onClick={toggle} aria-haspopup="listbox" aria-expanded={isOpen} aria-label="Select output language"
+      <button ref={triggerRef} id={id} type="button" onClick={toggle} aria-haspopup="listbox" aria-expanded={isOpen} aria-label="Select output language"
         className={`group inline-flex items-center gap-2 rounded-lg border font-medium transition-all duration-200 ${compact ? "px-3 py-2 text-sm" : "w-full px-4 py-3 text-sm"} ${isOpen ? "border-moss bg-mint/20 text-ink dark:border-glow dark:bg-glow/10" : "border-neutral-200 bg-white dark:border-border dark:bg-black"}`}>
         <span className="flex-1 text-left truncate">{selectedLang ? `${selectedLang.flag} ${selectedLang.name}` : "🌐 Auto-detect"}</span>
         <ChevronDown size={compact ? 14 : 16} className={`transition-transform ${isOpen ? "rotate-180" : ""}`} />
@@ -132,7 +134,7 @@ export function LanguageSelector({ value, onChange, id, compact = false }) {
             aria-label="Available languages"
             className="overflow-y-auto overscroll-contain max-h-[360px]"
           >
-            {filtered.length === 0 && (
+            {flatItems.length === 1 && (
               <li role="presentation" className="px-4 py-8 text-center text-sm text-neutral-400">No matches</li>
             )}
             {flatItems.map((item, index) => {
