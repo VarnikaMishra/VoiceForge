@@ -10,7 +10,7 @@ export function LanguageSelector({ value, onChange, id, compact = false }) {
   const containerRef = useRef(null);
   const searchRef = useRef(null);
   const listRef = useRef(null);
-  const triggerRef = useRef(null); // Added for focus restoration
+  const triggerRef = useRef(null);
 
   const selectedLang = getLanguageByCode(value);
   const regions = useMemo(() => getRegions(), []);
@@ -44,7 +44,7 @@ export function LanguageSelector({ value, onChange, id, compact = false }) {
     setIsOpen(false);
     setSearch("");
     setFocusIndex(-1);
-    triggerRef.current?.focus(); // Restore focus to the trigger button
+    triggerRef.current?.focus();
   }, []);
 
   const openDropdown = useCallback(() => {
@@ -101,7 +101,7 @@ export function LanguageSelector({ value, onChange, id, compact = false }) {
   return (
     <div ref={containerRef} className="relative" onKeyDown={handleKeyDown}>
       <button ref={triggerRef} id={id} type="button" onClick={toggle} aria-haspopup="listbox" aria-expanded={isOpen} aria-label="Select output language"
-        className={`group inline-flex items-center gap-2 rounded-lg border font-medium transition-all duration-200 ${compact ? "px-3 py-2 text-sm" : "w-full px-4 py-3 text-sm"} ${isOpen ? "border-moss bg-mint/20 text-ink dark:border-glow dark:bg-glow/10" : "border-neutral-200 bg-white dark:border-border dark:bg-black"}`}>
+        className={`group inline-flex items-center gap-2 rounded-lg border font-medium transition-all duration-200 ${compact ? "px-3 py-2 text-sm" : "w-full px-4 py-3 text-sm"} ${isOpen ? "border-moss bg-mint/20 text-ink dark:border-glow dark:bg-glow/10 dark:text-neutral-100" : "border-neutral-200 bg-white dark:border-border dark:bg-black dark:text-neutral-100"}`}>
         <span className="flex-1 text-left truncate">{selectedLang ? `${selectedLang.flag} ${selectedLang.name}` : "🌐 Auto-detect"}</span>
         <ChevronDown size={compact ? 14 : 16} className={`transition-transform ${isOpen ? "rotate-180" : ""}`} />
       </button>
@@ -122,7 +122,7 @@ export function LanguageSelector({ value, onChange, id, compact = false }) {
               value={search} 
               onChange={(e) => { setSearch(e.target.value); setFocusIndex(-1); }} 
               placeholder="Search languages..." 
-              className="flex-1 bg-transparent text-sm outline-none" 
+              className="flex-1 bg-transparent text-sm outline-none dark:text-neutral-100" 
             />
             {search && <button type="button" aria-label="Clear language search" onClick={() => { setSearch(""); searchRef.current?.focus(); }}><X size={14} /></button>}
           </div>
@@ -138,7 +138,7 @@ export function LanguageSelector({ value, onChange, id, compact = false }) {
               <li role="presentation" className="px-4 py-8 text-center text-sm text-neutral-400">No matches</li>
             )}
             {flatItems.map((item, index) => {
-              if (item.type === "header") return <li key={item.region} role="presentation" className="sticky top-0 bg-neutral-50 px-4 py-2 text-[11px] font-bold uppercase text-neutral-400">{item.region}</li>;
+              if (item.type === "header") return <li key={item.region} role="presentation" className="sticky top-0 bg-neutral-50 px-4 py-2 text-[11px] font-bold uppercase text-neutral-400 dark:bg-black dark:text-neutral-500">{item.region}</li>;
               
               const isSelected = value === item.code;
               const optionId = id ? `${id}-option-${index}` : `option-${index}`;
@@ -152,7 +152,7 @@ export function LanguageSelector({ value, onChange, id, compact = false }) {
                   data-index={index}
                   onClick={() => selectLanguage(item.code)}
                   onMouseEnter={() => setFocusIndex(index)}
-                  className={`flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm cursor-pointer ${focusIndex === index ? "bg-moss/8" : ""} ${isSelected ? "font-semibold text-moss" : ""}`}>
+                  className={`flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm cursor-pointer ${focusIndex === index ? "bg-moss/8" : ""} ${isSelected ? "font-semibold text-moss dark:text-glow" : "text-neutral-700 dark:text-neutral-300"}`}>
                   <span className="text-lg" aria-hidden="true">{item.type === "auto" ? "🌐" : item.flag}</span>
                   <span className="flex-1 truncate">{item.name}</span>
                   {isSelected && <Check size={15} />}
